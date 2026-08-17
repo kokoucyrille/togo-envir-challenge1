@@ -1,0 +1,4 @@
+scenario,croissance_population_%,nouveaux_ouvrages_hypothetiques,population_scenario,ouvrages_documentes_scenario,pression_nationale_scenario,variation_pression_vs_actuel_%
+Statu quo,0.0,0,8170146,67,120149.2,0.0
+Investissement modéré,15.0,36,9395667,103,90343.0,-24.8
+Investissement renforcé,15.0,109,9395667,176,53082.9,-55.8

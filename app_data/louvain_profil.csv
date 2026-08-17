@@ -1,0 +1,11 @@
+communaute_louvain,nb_cantons,population_totale,fri_moyen,priority_score_moyen,pression_moyenne,regions
+4,38,2983311.15,0.24,43.76,50371.24,Maritime
+5,37,821253.71,0.12,39.15,21586.3,"Maritime, Plateaux"
+6,37,715473.42,0.09,38.01,19337.12,"Centrale, Plateaux"
+8,24,365202.58,0.1,37.63,15216.77,"Kara, Savanes"
+3,40,522882.56,0.11,37.43,12429.41,"Centrale, Kara"
+1,55,948115.37,0.1,37.1,17238.46,Savanes
+0,57,718461.05,0.09,36.22,12604.58,Kara
+2,46,416023.92,0.07,34.85,9044.0,"Centrale, Plateaux"
+7,31,261504.09,0.08,34.49,8435.62,Plateaux
+9,23,417917.69,0.11,33.05,12106.94,Maritime
