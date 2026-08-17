@@ -51,19 +51,20 @@ def render(state):
     c1, c2, c3, c4 = st.columns(4)
     with c1:
         kpi_card(t("Cantons couverts (FRI)", "Cantons covered (FRI)"), format_number(kpi["cantons_couverts_fri"]),
-                  t("Couverture territoriale complète", "Full territorial coverage"))
+                  t("Couverture territoriale complète", "Full territorial coverage"), icon="cantons")
     with c2:
         kpi_card(t("Population estimée", "Estimated population"),
                   format_number(kpi["population_totale_estimee"] / 1_000_000, 2) + " M",
-                  t("Habitants, tous cantons", "Inhabitants, all cantons"), variant="gold")
+                  t("Habitants, tous cantons", "Inhabitants, all cantons"), variant="gold", icon="population")
     with c3:
         kpi_card(t("Ouvrages documentés", "Documented infrastructure"),
                   format_number(kpi["nombre_ouvrages_documentes_total"]),
-                  f"{kpi['nombre_points_tde']} TdE + {kpi['nombre_sous_projets_coso']} COSO", variant="grey")
+                  f"{kpi['nombre_points_tde']} TdE + {kpi['nombre_sous_projets_coso']} COSO", variant="grey",
+                  icon="database")
     with c4:
         kpi_card(t("Cantons sans ouvrage documenté", "Cantons with no documented infrastructure"),
                   f"{kpi['part_cantons_sans_ouvrage_%']:.0f} %",
-                  t("Sur l'ensemble des 388 cantons", "Out of all 388 cantons"), variant="red")
+                  t("Sur l'ensemble des 388 cantons", "Out of all 388 cantons"), variant="red", icon="warning")
 
     st.markdown("<div style='margin-top:14px;'></div>", unsafe_allow_html=True)
     kpi_group_label(t("Priorisation et exposition au risque", "Prioritization and risk exposure"))
@@ -71,20 +72,20 @@ def render(state):
     with c5:
         kpi_card(t("Ouvrages / 10 000 hab.", "Infrastructure / 10,000 inh."),
                   f"{kpi['ouvrages_pour_10000_hab_national']:.3f}",
-                  t("Moyenne nationale documentée", "Documented national average"))
+                  t("Moyenne nationale documentée", "Documented national average"), icon="gauge")
     with c6:
         kpi_card(t("Ouvrages exposés à un risque élevé", "Infrastructure exposed to high risk"),
                   f"{kpi['part_ouvrages_exposes_risque_eleve_%']:.1f} %",
                   t("FRI supérieur au seuil du 75e percentile", "FRI above the 75th percentile threshold"),
-                  variant="red")
+                  variant="red", icon="warning")
     with c7:
         kpi_card(t("Cantons à prioriser (nouveaux ouvrages)", "Cantons to prioritize (new infrastructure)"),
                   format_number(kpi["nombre_cantons_nouveaux_ouvrages_prioritaires"]),
                   t("Pression forte et 0 ouvrage documenté", "High pressure and 0 documented infrastructure"),
-                  variant="gold")
+                  variant="gold", icon="flag")
     with c8:
         kpi_card(t("Score de priorité moyen", "Average priority score"), f"{kpi['score_priorite_moyen']:.1f} / 100",
-                  "Water Infrastructure Priority Score", variant="grey")
+                  "Water Infrastructure Priority Score", variant="grey", icon="target")
 
     st.markdown("<br>", unsafe_allow_html=True)
     section_title(t(

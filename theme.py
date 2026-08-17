@@ -145,6 +145,12 @@ BASE_CSS = f"""
         padding: 14px 16px;
         height: 100%;
     }}
+    .kpi-top-row {{
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 8px;
+    }}
     .kpi-card .kpi-label {{
         font-size: 0.74rem;
         text-transform: uppercase;
@@ -153,6 +159,16 @@ BASE_CSS = f"""
         font-weight: 600;
         margin-bottom: 6px;
     }}
+    .kpi-icon {{
+        width: 20px;
+        height: 20px;
+        min-width: 20px;
+        color: {GREEN};
+        opacity: 0.55;
+    }}
+    .kpi-card.gold .kpi-icon {{ color: {GOLD_DARK}; }}
+    .kpi-card.red .kpi-icon {{ color: {RED}; }}
+    .kpi-card.grey .kpi-icon {{ color: {GREY}; }}
     .kpi-card .kpi-value {{
         font-size: 1.55rem;
         font-weight: 800;
@@ -231,30 +247,80 @@ BASE_CSS = f"""
 
     /* ---------- Navigation latérale ---------- */
     section[data-testid="stSidebar"] .block-container {{
-        padding-top: 1.3rem;
-        padding-left: 1.1rem;
-        padding-right: 1.1rem;
+        padding-top: 0.9rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        padding-bottom: 0.8rem;
     }}
     section[data-testid="stSidebar"] div[data-testid="stVerticalBlock"] {{
-        gap: 0.55rem;
+        gap: 0.3rem;
     }}
-    section[data-testid="stSidebar"] hr {{
-        margin: 0.75rem 0;
+    section[data-testid="stSidebar"] hr.sidebar-divider {{
+        margin: 0.7rem 0 0.6rem 0;
+        border-color: {BORDER};
+    }}
+
+    /* Bloc identité (logo + nom), compact et sur une seule ligne */
+    .sidebar-brand {{
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 2px 2px 0 2px;
+    }}
+    .sidebar-brand-logo {{
+        width: 42px;
+        height: 42px;
+        min-width: 42px;
+        border-radius: 50%;
+        background: white;
+        padding: 3px;
+        border: 1px solid {BORDER};
+    }}
+    .sidebar-brand-title {{
+        font-weight: 700;
+        color: {GREEN_DARK};
+        font-size: 0.84rem;
+        line-height: 1.2;
+    }}
+    .sidebar-brand-sub {{
+        color: {GREY};
+        font-size: 0.66rem;
+        line-height: 1.25;
+        margin-top: 1px;
+    }}
+
+    /* Bascule de langue : espacement net entre l'étiquette et les boutons */
+    .lang-toggle-wrap {{
+        margin-top: 10px;
+    }}
+    .lang-toggle-label {{
+        text-align: center;
+        font-size: 0.66rem;
+        color: {GREY};
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }}
+
+    /* Bloc de navigation : groupes resserrés, tenant sans ascenseur */
+    .nav-block {{
+        margin-top: 4px;
     }}
     .nav-group-title {{
-        font-size: 0.7rem;
+        font-size: 0.66rem;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.6px;
         color: {GREY};
-        margin: 4px 4px 6px 4px;
+        margin: 0 4px 4px 4px;
         padding-left: 9px;
         border-left: 3px solid transparent;
         transition: color 0.15s ease-in-out, border-color 0.15s ease-in-out;
     }}
     .nav-group-title-spaced {{
-        margin-top: 18px;
-        padding-top: 14px;
+        margin-top: 10px;
+        padding-top: 8px;
         border-top: 1px solid {BORDER};
     }}
     .nav-group-title-active {{
@@ -264,14 +330,26 @@ BASE_CSS = f"""
     section[data-testid="stSidebar"] div[data-testid="stButton"] > button {{
         text-align: left;
         justify-content: flex-start;
-        border-radius: 8px;
-        padding: 10px 14px;
-        font-size: 0.87rem;
+        border-radius: 7px;
+        padding: 7px 12px;
+        font-size: 0.82rem;
         font-weight: 600;
-        line-height: 1.25;
-        white-space: normal;
+        line-height: 1.2;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
         transition: all 0.15s ease-in-out;
         border: 1px solid transparent;
+    }}
+    section[data-testid="stSidebar"] div[data-testid="stButton"] > button p {{
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: inherit;
+    }}
+    section[data-testid="stSidebar"] div[data-testid="stButton"] > button [data-testid="stIconMaterial"] {{
+        font-size: 1.05rem;
+        opacity: 0.85;
     }}
     section[data-testid="stSidebar"] div[data-testid="stButton"] > button:hover {{
         border-color: {GOLD};
@@ -290,6 +368,21 @@ BASE_CSS = f"""
         border-radius: 10px;
         padding: 1px 8px;
         margin-left: 6px;
+    }}
+
+    /* Filet de sécurité : sur les très petits écrans où le contenu de la barre
+       latérale dépasserait malgré la mise en page compacte, l'ascenseur reste
+       fin et discret plutôt que la barre épaisse par défaut du navigateur. */
+    section[data-testid="stSidebar"] > div {{
+        scrollbar-width: thin;
+        scrollbar-color: {BORDER} transparent;
+    }}
+    section[data-testid="stSidebar"] > div::-webkit-scrollbar {{
+        width: 5px;
+    }}
+    section[data-testid="stSidebar"] > div::-webkit-scrollbar-thumb {{
+        background: {BORDER};
+        border-radius: 4px;
     }}
 
     /* ---------- Filtres ---------- */

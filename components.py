@@ -20,12 +20,12 @@ def _logo_b64() -> str:
 
 def _language_toggle():
     """Bascule FR / EN sous forme de deux boutons côte à côte (mêmes styles que la nav),
-    parfaitement centrés et alignés avec le reste de la barre latérale."""
+    avec un espacement net entre l'étiquette « Langue » et les boutons pour éviter tout
+    effet de collage."""
     current = get_lang()
+    st.markdown('<div class="lang-toggle-wrap">', unsafe_allow_html=True)
     st.markdown(
-        f"<div style='text-align:center; font-size:0.68rem; color:{GREY}; "
-        f"text-transform:uppercase; letter-spacing:0.4px; margin-bottom:3px;'>"
-        f"{t('Langue', 'Language')}</div>",
+        f"<div class='lang-toggle-label'>{t('Langue', 'Language')}</div>",
         unsafe_allow_html=True,
     )
     col1, col2 = st.columns(2, gap="small")
@@ -41,22 +41,21 @@ def _language_toggle():
             if current != "en":
                 set_lang("en")
                 st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 def sidebar_brand():
     b64 = _logo_b64()
     st.markdown(
         f"""
-        <div style="text-align:center; padding: 2px 0 10px 0;">
-            <img src="data:image/png;base64,{b64}"
-                 style="width:76px; height:76px; border-radius:50%; background:white;
-                        padding:4px; border:1px solid {BORDER}; margin:0 auto;" />
-            <div style="font-weight:700; color:{GREEN_DARK}; margin-top:8px; font-size:0.9rem;">
-                {t("République Togolaise", "Togolese Republic")}
-            </div>
-            <div style="color:{GREY}; font-size:0.7rem; margin-top:2px; line-height:1.25;">
-                {t("Ministère de l'Eau, de l'Assainissement", "Ministry of Water, Sanitation")}<br>
-                {t("et de l'Hydraulique Villageoise", "and Rural Water Engineering")}
+        <div class="sidebar-brand">
+            <img src="data:image/png;base64,{b64}" class="sidebar-brand-logo" />
+            <div class="sidebar-brand-text">
+                <div class="sidebar-brand-title">{t("République Togolaise", "Togolese Republic")}</div>
+                <div class="sidebar-brand-sub">
+                    {t("Ministère de l'Eau, de l'Assainissement", "Ministry of Water, Sanitation")}<br>
+                    {t("et de l'Hydraulique Villageoise", "and Rural Water Engineering")}
+                </div>
             </div>
         </div>
         """,
@@ -66,15 +65,18 @@ def sidebar_brand():
 
 
 def sidebar_nav(groups, page_key: str) -> str:
-    """Navigation latérale groupée, avec bouton actif surligné (thème primaire) et
-    repère visuel (liseré) sur le titre du groupe contenant la page active, pour que
-    l'utilisateur retrouve sa position même quand le bouton actif n'est plus visible.
+    """Navigation latérale groupée et compacte, avec icône par page, bouton actif
+    surligné (thème primaire), et repère visuel (liseré) sur le titre du groupe
+    contenant la page active — pour que l'utilisateur retrouve sa position même quand
+    le bouton actif n'est plus visible. L'ensemble tient sans ascenseur dans la
+    barre latérale standard.
 
-    groups : liste de (titre_groupe, [(clé, libellé_affiché), ...])
+    groups : liste de (titre_groupe, [(clé, libellé_affiché, icône_material), ...])
     Retourne la clé de la page sélectionnée (met à jour st.session_state au besoin).
     """
+    st.sidebar.markdown('<div class="nav-block">', unsafe_allow_html=True)
     for i, (group_title, items) in enumerate(groups):
-        is_active_group = any(key == page_key for key, _ in items)
+        is_active_group = any(key == page_key for key, _, _ in items)
         css_classes = ["nav-group-title"]
         if i != 0:
             css_classes.append("nav-group-title-spaced")
@@ -83,16 +85,18 @@ def sidebar_nav(groups, page_key: str) -> str:
         st.sidebar.markdown(
             f'<div class="{" ".join(css_classes)}">{group_title}</div>', unsafe_allow_html=True
         )
-        for key, label in items:
+        for key, label, icon in items:
             is_active = key == page_key
             if st.sidebar.button(
                 label,
                 key=f"nav_{key}",
+                icon=f":material/{icon}:",
                 use_container_width=True,
                 type="primary" if is_active else "secondary",
             ):
                 st.session_state["page_key"] = key
                 st.rerun()
+    st.sidebar.markdown('</div>', unsafe_allow_html=True)
     return st.session_state.get("page_key", page_key)
 
 
@@ -125,12 +129,35 @@ def section_title(text: str):
     st.markdown(f'<div class="section-title">{text}</div>', unsafe_allow_html=True)
 
 
-def kpi_card(label: str, value: str, sub: str = "", variant: str = ""):
+KPI_ICONS = {
+    # Petites icônes ligne (style Material), dessinées en interne pour un rendu garanti
+    # et cohérent avec la charte, sans dépendance externe.
+    "cantons": '<path d="M12 21c-4.2-3.6-7-7.4-7-11a7 7 0 0 1 14 0c0 3.6-2.8 7.4-7 11Z"/><circle cx="12" cy="10" r="2.6"/>',
+    "population": '<path d="M17 20v-1.6a3.4 3.4 0 0 0-3.4-3.4H7.4A3.4 3.4 0 0 0 4 18.4V20"/><circle cx="10.5" cy="7.5" r="3.3"/><path d="M20 20v-1.6a3.4 3.4 0 0 0-2.3-3.2"/><path d="M14.8 4.3a3.3 3.3 0 0 1 0 6.4"/>',
+    "database": '<ellipse cx="12" cy="6" rx="7.5" ry="2.6"/><path d="M4.5 6v6c0 1.4 3.4 2.6 7.5 2.6s7.5-1.2 7.5-2.6V6"/><path d="M4.5 12v6c0 1.4 3.4 2.6 7.5 2.6s7.5-1.2 7.5-2.6v-6"/>',
+    "warning": '<path d="M12 3.5 21 19.5H3Z"/><path d="M12 10v4"/><circle cx="12" cy="17" r="0.15" fill="currentColor" stroke-width="2"/>',
+    "gauge": '<path d="M4 15.5a8 8 0 1 1 16 0"/><path d="M12 15.5 15.5 10"/><circle cx="12" cy="15.5" r="1.1" fill="currentColor" stroke="none"/>',
+    "target": '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/>',
+    "trend": '<path d="M3.5 17 10 10.5l4 4 6.5-7.5"/><path d="M15 6.5h5.5V12"/>',
+    "flag": '<path d="M6 21V4"/><path d="M6 4.5c1.6-1.2 3.4-1.2 5 0s3.4 1.2 5 0v9c-1.6 1.2-3.4 1.2-5 0s-3.4-1.2-5 0Z"/>',
+}
+
+
+def kpi_card(label: str, value: str, sub: str = "", variant: str = "", icon: str = ""):
     cls = f"kpi-card {variant}".strip()
+    icon_html = ""
+    if icon and icon in KPI_ICONS:
+        icon_html = (
+            '<svg class="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" '
+            f'stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">{KPI_ICONS[icon]}</svg>'
+        )
     st.markdown(
         f"""
         <div class="{cls}">
-            <div class="kpi-label">{label}</div>
+            <div class="kpi-top-row">
+                <div class="kpi-label">{label}</div>
+                {icon_html}
+            </div>
             <div class="kpi-value">{value}</div>
             <div class="kpi-sub">{sub}</div>
         </div>

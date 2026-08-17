@@ -20,47 +20,48 @@ from views import accueil, carte, pression, inondation, coso, priorisation, terr
 with st.sidebar:
     sidebar_brand()
 
-# (clé interne, module, titre affiché, sous-titre, a_besoin_de_filtres)
+# (clé interne, module, titre affiché, sous-titre, a_besoin_de_filtres, icône Material)
 PAGE_DEFS = [
     ("overview", accueil,
-     t("01 · Vue d'ensemble", "01 · Overview"),
+     t("Vue d'ensemble", "Overview"),
      t("Indicateurs clés et carte de synthèse", "Key indicators and summary map"),
-     True),
+     True, "dashboard"),
     ("map", carte,
-     t("02 · Cartographie", "02 · Map"),
+     t("Cartographie", "Map"),
      t("Risque d'inondation, population et ouvrages hydrauliques", "Flood risk, population and water infrastructure"),
-     True),
+     True, "map"),
     ("pressure", pression,
-     t("03 · Pression démographique", "03 · Demographic pressure"),
+     t("Pression démographique", "Demographic pressure"),
      t("Population rapportée aux ouvrages documentés", "Population relative to documented infrastructure"),
-     True),
+     True, "groups"),
     ("flood", inondation,
-     t("04 · Risque d'inondation", "04 · Flood risk"),
+     t("Risque d'inondation", "Flood risk"),
      t("Exposition des ouvrages au risque d'inondation", "Infrastructure exposure to flood risk"),
-     True),
+     True, "warning"),
     ("coso", coso,
-     t("05 · Projets COSO", "05 · COSO projects"),
+     t("Projets COSO", "COSO projects"),
      t("Suivi des sous-projets et risque de retard", "Sub-project monitoring and delay risk"),
-     True),
+     True, "construction"),
     ("priority", priorisation,
-     t("06 · Priorisation", "06 · Prioritization"),
+     t("Priorisation", "Prioritization"),
      t("Water Infrastructure Priority Score et plan d'action", "Water Infrastructure Priority Score and action plan"),
-     True),
+     True, "flag"),
     ("territories", territoires,
-     t("07 · Territoires", "07 · Territories"),
+     t("Territoires", "Territories"),
      t("Regroupement territorial complémentaire", "Complementary territorial clustering"),
-     True),
+     True, "layers"),
     ("methodology", methodologie,
-     t("08 · Méthodologie", "08 · Methodology"),
+     t("Méthodologie", "Methodology"),
      t("Sources, méthode et limites du diagnostic", "Sources, method and limitations of the diagnosis"),
-     False),
+     False, "menu_book"),
     ("about", apropos,
-     t("09 · À propos", "09 · About"),
+     t("À propos", "About"),
      t("Auteur et contexte du projet", "Author and project context"),
-     False),
+     False, "info"),
 ]
-PAGES = {key: (module, subtitle, needs_filters) for key, module, _, subtitle, needs_filters in PAGE_DEFS}
-LABELS = {key: label for key, _, label, _, _ in PAGE_DEFS}
+PAGES = {key: (module, subtitle, needs_filters) for key, module, _, subtitle, needs_filters, _ in PAGE_DEFS}
+LABELS = {key: label for key, _, label, _, _, _ in PAGE_DEFS}
+ICONS = {key: icon for key, _, _, _, _, icon in PAGE_DEFS}
 
 NAV_GROUPS = [
     (t("Diagnostic", "Diagnosis"), ["overview", "map", "pressure", "flood", "coso"]),
@@ -70,11 +71,10 @@ NAV_GROUPS = [
 GROUP_OF_PAGE = {key: group_title for group_title, keys in NAV_GROUPS for key in keys}
 
 with st.sidebar:
-    st.markdown("---")
-    st.markdown(f"##### {t('Navigation', 'Navigation')}")
+    st.markdown('<hr class="sidebar-divider" />', unsafe_allow_html=True)
     default_page_key = st.session_state.get("page_key", PAGE_DEFS[0][0])
     page_key = sidebar_nav(
-        [(title, [(k, LABELS[k]) for k in keys]) for title, keys in NAV_GROUPS],
+        [(title, [(k, LABELS[k], ICONS[k]) for k in keys]) for title, keys in NAV_GROUPS],
         default_page_key,
     )
 
